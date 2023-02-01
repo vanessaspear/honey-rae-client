@@ -79,6 +79,24 @@ export const Ticket = () => {
         }
     }
 
+    const closeTicket = () => {
+        const completionDate = new Date()
+        const formattedCompletionDate = completionDate.toLocaleDateString()
+
+        const closedTicket = {...ticket} 
+        closedTicket.date_completed = formattedCompletionDate
+
+        closedTicket.employee = parseInt(ticket?.employee?.id)
+
+        fetchIt(
+            `http://localhost:8000/tickets/${ticketId}`,
+            {
+                method: "PUT",
+                body: JSON.stringify(closedTicket)
+            }
+        ).then(fetchTicket)
+    }
+
     return (
         <>
             <section className="ticket">
@@ -91,7 +109,7 @@ export const Ticket = () => {
                         {
                             ticket.date_completed === null
                                 ? employeePicker(ticket)
-                                : `Completed by ${ticket.employee?.name} on ${ticket.date_completed}`
+                                : `Completed by ${ticket.employee?.full_name} on ${ticket.date_completed}`
                         }
                     </div>
                     <div className="footerItem">
@@ -99,7 +117,7 @@ export const Ticket = () => {
                     </div>
                     {
                         isStaff()
-                            ? ""
+                            ? <button onClick={closeTicket}>Mark Done</button>
                             : <button onClick={deleteTicket}>Delete</button>
                     }
                 </footer>

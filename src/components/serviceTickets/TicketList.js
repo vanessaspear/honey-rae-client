@@ -47,10 +47,33 @@ export const TicketList = () => {
             .catch(() => setOriginal([]))
     }
 
+    const searchTicketDescription = (search) => {
+        fetchIt(`http://localhost:8000/tickets?description=${search}`)
+            .then((tickets) => {
+                setOriginal(tickets)
+            })
+            .catch(() => setOriginal([]))
+    }
+
     return <>
+        { isStaff() ? 
+            <div>
+                <label htmlFor="description">Description:</label>
+                <input
+                    onChange={
+                        (evt) => {searchTicketDescription(evt.target.value)}
+                    }
+                    type="text" id="description"
+                    placeholder="Search by ticket description"
+                    />
+            </div> 
+            : ""
+        }
         <div>
             <button onClick={() => filterTickets("done")}>Show Done</button>
             <button onClick={() => filterTickets("all")}>Show All</button>
+            <button onClick={() => filterTickets("unclaimed")}>Show Unclaimed</button>
+            <button onClick={() => filterTickets("inprogress")}>Show In Progress</button>
         </div>
         <div className="actions">{toShowOrNotToShowTheButton()}</div>
         <div className="activeTickets">{active}</div>
